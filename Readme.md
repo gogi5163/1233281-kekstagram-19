@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Александр Тимошенский](https://up.htmlacademy.ru/javascript/19/user/1233281).
-* Наставник: `Неизвестно`.
+* Наставник: [Евгений Колегов] (https://htmlacademy.ru/profile/id21780).
 
 ---
 
