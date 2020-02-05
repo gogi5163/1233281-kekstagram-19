@@ -141,14 +141,14 @@ var closePopup = function () {
   inputHashTag.removeEventListener('input', onTest);
   form.reset();
   inputHashTag.setCustomValidity('');
-  
+
 
 };
 var onEscapePress = function (evt) {
   if (evt.key === 'Escape') {
     if (document.activeElement !== inputHashTag) {
       closePopup();
-      
+
     } else {
       inputHashTag.blur();
     }
@@ -352,5 +352,5 @@ var onTest = function (evt) {
   } else {
     target.setCustomValidity('');
   }
-}
+};
 
