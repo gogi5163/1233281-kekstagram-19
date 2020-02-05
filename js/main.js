@@ -93,7 +93,6 @@ for (var i = 0; i < randomPhotos.length; i++) {
 photoElementList.appendChild(fragment);
 
 // 4 Показываем .big-picture, и заполняем его информацией из массива с данными
-// document.querySelector('.big-picture').classList.remove('hidden');
 document.querySelector('.big-picture__img img').setAttribute('src', randomPhotos[0].url);
 document.querySelector('.likes-count').textContent = randomPhotos[0].likes;
 document.querySelector('.comments-count').textContent = randomPhotos[0].comments.length;
@@ -129,24 +128,32 @@ document.querySelector('body').classList.add('modal-open');
 // Загрузка изображения и показ формы редактирования
 var upload = document.querySelector('#upload-file');
 var cancel = document.querySelector('#upload-cancel');
-var redaktForm = document.querySelector('.img-upload__overlay');
+var form = document.querySelector('#upload-select-image');
+var editForm = document.querySelector('.img-upload__overlay');
+
+var openPopup = function () {
+  editForm.classList.remove('hidden');
+};
+var closePopup = function () {
+  editForm.classList.add('hidden');
+};
 var onEscapePress = function (evt) {
   if (evt.key === 'Escape') {
     if (document.activeElement !== inputHashTag) {
-      redaktForm.classList.add('hidden');
-      upload.value = '';
+      closePopup();
+      form.reset();
     } else {
       inputHashTag.blur();
     }
   }
 };
 upload.addEventListener('change', function () {
-  redaktForm.classList.remove('hidden');
+  openPopup();
   document.addEventListener('keydown', onEscapePress);
 });
 cancel.addEventListener('click', function () {
-  redaktForm.classList.add('hidden');
-  upload.value = '';
+  closePopup();
+  form.reset();
   document.removeEventListener('keydown', onEscapePress);
 });
 // Применение эффекта для изображения и редактирование размера изображения
@@ -161,17 +168,17 @@ var currentFilter = 'none';
 var currentSaturationFilter = 'none';
 // Увеличение масштаба изображения
 var onPreviewIncrease = function () {
-  var numericCurrentScale = currentScale.value.substring(0, currentScale.value.length - 1);
-  if (numericCurrentScale < MAX_SCALE) {
-    currentScale.setAttribute('value', +numericCurrentScale + 25 + '%');
+  if (Number.parseInt(currentScale.getAttribute('value'), 10) < MAX_SCALE) {
+    var newScale = Number.parseInt(currentScale.getAttribute('value'), 10) + 25 + '%';
+    currentScale.setAttribute('value', newScale);
     uploadImage.setAttribute('style', getPreviewStyle());
   }
 };
 // Уменьшение масштаба изображения
 var onPreviewDecrease = function () {
-  var numericCurrentScale = currentScale.value.substring(0, currentScale.value.length - 1);
-  if (numericCurrentScale > MIN_SCALE) {
-    currentScale.setAttribute('value', numericCurrentScale - 25 + '%');
+  if (Number.parseInt(currentScale.getAttribute('value'), 10) > MIN_SCALE) {
+    var newScale = Number.parseInt(currentScale.getAttribute('value'), 10) - 25 + '%';
+    currentScale.setAttribute('value', newScale);
     uploadImage.setAttribute('style', getPreviewStyle());
   }
 };
@@ -179,8 +186,8 @@ buttonControlSmaller.addEventListener('click', onPreviewDecrease);
 buttonControlBigger.addEventListener('click', onPreviewIncrease);
 // Функция для получения атрибута style в зав-ти от выбранных фильтров и насыщенности
 var getPreviewStyle = function () {
-  var numericCurrentScale = currentScale.value.substring(0, currentScale.value.length - 1);
-  return 'transform: scale(' + numericCurrentScale / 100 + ');' + 'filter: ' + currentFilter +
+  var fractionalValue = Number.parseInt(currentScale.getAttribute('value'), 10) / 100;
+  return 'transform: scale(' + fractionalValue + ');' + 'filter: ' + currentFilter +
   '(' + currentSaturationFilter + ');';
 };
 var radioEffectButtons = document.querySelectorAll('.effects__radio');
@@ -203,9 +210,9 @@ for (i = 0; i < radioEffectButtons.length; i++) {
 var sliderEffect = document.querySelector('.img-upload__effect-level');
 var effectLevelPin = sliderEffect.querySelector('.effect-level__pin');
 var effectLevel = sliderEffect.querySelector('.effect-level__value');
-// Рассчет и применения текущей насыщенности фильтра в зависимости от значения effectLevel.value
+// Рассчет и применения текущей насыщенности фильтра в зависимости от значения value у  effectLevel
 var onEffectSaturateChange = function () {
-  var currentEffectLevelValue = effectLevel.value;
+  var currentEffectLevelValue = effectLevel.getAttribute('value');
   if (uploadImage.classList.contains('effects__preview--chrome')) {
     currentFilter = 'grayscale';
     currentSaturationFilter = currentEffectLevelValue / 100;
@@ -295,34 +302,34 @@ var checkCountTags = function (hashtag, index) {
   return error;
 };
 var checkInput = function () {
-  var tagArray = splitString();
+  var tags = splitString();
   var stringError = '';
-  for (i = 0; i < tagArray.length; i++) {
+  for (i = 0; i < tags.length; i++) {
     // хештеги необязательны
-    if (tagArray.length === 1 && tagArray[0] === '') {
+    if (tags.length === 1 && tags[0] === '') {
       break;
     }
-    if (checkValidFirstCharacter(tagArray[0])) {
+    if (checkValidFirstCharacter(tags[0])) {
       stringError = 'хэш-тег начинается с символа # (решётка). хэш-теги разделяются пробелами';
       break;
     }
-    if (checkValidCharacters(tagArray[i])) {
+    if (checkValidCharacters(tags[i])) {
       stringError = 'строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т.п.), символы пунктуации (тире, дефис, запятая и т.п.), эмодзи и т.д.';
       break;
     }
-    if (checkMinLength(tagArray[i])) {
+    if (checkMinLength(tags[i])) {
       stringError = 'хеш-тег не может состоять только из одной решётки';
       break;
     }
-    if (checkMaxLength(tagArray[i])) {
+    if (checkMaxLength(tags[i])) {
       stringError = 'максимальная длина одного хэш-тега 20 символов, включая решётку';
       break;
     }
-    if (checkCopies(tagArray, i)) {
+    if (checkCopies(tags, i)) {
       stringError = 'один и тот же хэш-тег не может быть использован дважды';
       break;
     }
-    if (checkCountTags(tagArray[i], i)) {
+    if (checkCountTags(tags[i], i)) {
       stringError = 'нельзя указать больше пяти хэш-тегов';
       break;
     }
