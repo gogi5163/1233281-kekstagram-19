@@ -133,15 +133,22 @@ var editForm = document.querySelector('.img-upload__overlay');
 
 var openPopup = function () {
   editForm.classList.remove('hidden');
+  inputHashTag.addEventListener('input', onTest);
+
 };
 var closePopup = function () {
   editForm.classList.add('hidden');
+  inputHashTag.removeEventListener('input', onTest);
+  form.reset();
+  inputHashTag.setCustomValidity('');
+  
+
 };
 var onEscapePress = function (evt) {
   if (evt.key === 'Escape') {
     if (document.activeElement !== inputHashTag) {
       closePopup();
-      form.reset();
+      
     } else {
       inputHashTag.blur();
     }
@@ -153,7 +160,6 @@ upload.addEventListener('change', function () {
 });
 cancel.addEventListener('click', function () {
   closePopup();
-  form.reset();
   document.removeEventListener('keydown', onEscapePress);
 });
 // Применение эффекта для изображения и редактирование размера изображения
@@ -168,16 +174,18 @@ var currentFilter = 'none';
 var currentSaturationFilter = 'none';
 // Увеличение масштаба изображения
 var onPreviewIncrease = function () {
-  if (Number.parseInt(currentScale.getAttribute('value'), 10) < MAX_SCALE) {
-    var newScale = Number.parseInt(currentScale.getAttribute('value'), 10) + 25 + '%';
+  var scale = parseInt(currentScale.getAttribute('value'), 10);
+  if (scale < MAX_SCALE) {
+    var newScale = scale + 25 + '%';
     currentScale.setAttribute('value', newScale);
     uploadImage.setAttribute('style', getPreviewStyle());
   }
 };
 // Уменьшение масштаба изображения
 var onPreviewDecrease = function () {
-  if (Number.parseInt(currentScale.getAttribute('value'), 10) > MIN_SCALE) {
-    var newScale = Number.parseInt(currentScale.getAttribute('value'), 10) - 25 + '%';
+  var scale = parseInt(currentScale.getAttribute('value'), 10);
+  if (scale > MIN_SCALE) {
+    var newScale = scale - 25 + '%';
     currentScale.setAttribute('value', newScale);
     uploadImage.setAttribute('style', getPreviewStyle());
   }
@@ -186,7 +194,7 @@ buttonControlSmaller.addEventListener('click', onPreviewDecrease);
 buttonControlBigger.addEventListener('click', onPreviewIncrease);
 // Функция для получения атрибута style в зав-ти от выбранных фильтров и насыщенности
 var getPreviewStyle = function () {
-  var fractionalValue = Number.parseInt(currentScale.getAttribute('value'), 10) / 100;
+  var fractionalValue = parseInt(currentScale.getAttribute('value'), 10) / 100;
   return 'transform: scale(' + fractionalValue + ');' + 'filter: ' + currentFilter +
   '(' + currentSaturationFilter + ');';
 };
@@ -336,7 +344,7 @@ var checkInput = function () {
   }
   return stringError;
 };
-inputHashTag.addEventListener('input', function (evt) {
+var onTest = function (evt) {
   var target = evt.target;
   var customStringError = checkInput();
   if (customStringError) {
@@ -344,4 +352,5 @@ inputHashTag.addEventListener('input', function (evt) {
   } else {
     target.setCustomValidity('');
   }
-});
+}
+
