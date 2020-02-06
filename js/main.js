@@ -92,40 +92,8 @@ for (var i = 0; i < randomPhotos.length; i++) {
 // 3 Вставка элементов в DOM
 photoElementList.appendChild(fragment);
 
-// 4 Показываем .big-picture, и заполняем его информацией из массива с данными
-document.querySelector('.big-picture__img img').setAttribute('src', randomPhotos[0].url);
-document.querySelector('.likes-count').textContent = randomPhotos[0].likes;
-document.querySelector('.comments-count').textContent = randomPhotos[0].comments.length;
-document.querySelector('.social__caption').textContent = randomPhotos[0].description;
-// 4.1 Задаем шаблон комментария
-var commentElementTemplate = document.querySelector('.social__comment');
-// 4.2 Переопределяем и наполняем фрагмент данными из массива
-fragment = document.createDocumentFragment();
-for (i = 0; i < randomPhotos[0].comments.length; i++) {
-  var commentElement = commentElementTemplate.cloneNode(true);
-  commentElement.querySelector('.social__picture').setAttribute('src', randomPhotos[0].comments[i].avatar);
-  commentElement.querySelector('.social__picture').setAttribute('alt', randomPhotos[0].comments[i].name);
-  commentElement.querySelector('.social__text').textContent = randomPhotos[0].comments[i].message;
-  fragment.appendChild(commentElement);
-}
-// 4.3 Ищем дефолтные комментарии и удаляем их из DOM
-var commentsCollection = document.querySelectorAll('.social__comments');
-var allDefaultComments = document.querySelectorAll('.social__comment');
-for (i = 0; i < allDefaultComments.length; i++) {
-  commentsCollection[0].removeChild(allDefaultComments[i]);
-
-}
-// 4.4 Добавляем сгенерированные комментарии в DOM
-document.querySelector('.social__comments').appendChild(fragment);
-
-// 5 Прячем блоки счётчика комментариев и загрузки новых комментариев
-document.querySelector('.social__comment-count').classList.add('hidden');
-document.querySelector('.comments-loader').classList.add('hidden');
-
-// 6 Добавляем body класс modal-open, чтобы контейнер с фотографиями позади не прокручивался при скролле
-document.querySelector('body').classList.add('modal-open');
-
 // Загрузка изображения и показ формы редактирования
+var ESC_KEY = 'Escape';
 var upload = document.querySelector('#upload-file');
 var cancel = document.querySelector('#upload-cancel');
 var form = document.querySelector('#upload-select-image');
@@ -145,12 +113,11 @@ var closePopup = function () {
 
 };
 var onEscapePress = function (evt) {
-  if (evt.key === 'Escape') {
-    if (document.activeElement !== inputHashTag) {
+  if (evt.key === ESC_KEY) {
+    if (document.activeElement !== inputHashTag && document.activeElement !== textareaComment) {
       closePopup();
-
     } else {
-      inputHashTag.blur();
+      document.activeElement.blur();
     }
   }
 };
@@ -256,6 +223,7 @@ var MIN_LENGTH_TAG = 2;
 var MAX_LENGTH_TAG = 20;
 var MAX_TAG_COUNT = 5;
 var inputHashTag = document.querySelector('.text__hashtags');
+var textareaComment = document.querySelector('.text__description');
 // Преобразование строки в массив, где разделителем является 1 или более раздельных символов подряд
 var splitString = function () {
   var tagString = inputHashTag.value;
@@ -353,4 +321,88 @@ var onTest = function (evt) {
     target.setCustomValidity('');
   }
 };
+
+// Полноэкранный режим
+var ENTER_KEY = 'Enter';
+var body = document.querySelector('body');
+var bigPicture = document.querySelector('.big-picture');
+// bigPicture.classList.remove('hidden');
+var switchOffTabNavigation = function (collection) {
+  // убираю возможность навигации по табу у ссылок на фоне, чтобы нажатие таба давало фокус сразу на нужный элемент.
+  for (i = 0; i < collection.length; i++) {
+    collection[i].setAttribute('tabindex', '-1');
+  }
+};
+var switchOnTabNavigation = function (collection) {
+  // добавляю возможность навигации по табу у ссылок
+  for (i = 0; i < collection.length; i++) {
+    collection[i].setAttribute('tabindex', '0');
+  }
+};
+var onThumbnailClick = function (evt) {
+  showBigPicture(evt.target);
+};
+var onThumbnailPressEnter = function (evt) {
+  if (evt.key === ENTER_KEY) {
+  // т.к. табуляция идет по ссылкам, в которые обернуты изображения, найдем нужное изображение с помощью свойства children под индексом 0
+    showBigPicture(evt.target.children[0]);
+  }
+};
+var onPictureCancelClick = function () {
+  bigPicture.classList.add('hidden');
+  body.classList.remove('modal-open');
+  switchOnTabNavigation(links);
+};
+var showBigPicture = function (element) {
+  switchOffTabNavigation(links);
+  var src = element.getAttribute('src');
+  for (var j = 0; j < randomPhotos.length; j++) {
+    // по атрибуту src элемента, по которому произошел клик найдем объект с данными
+    if (randomPhotos[j].url === src) {
+      var pictureData = randomPhotos[j];
+      break;
+    }
+  }
+  // Показываем .big-picture, и заполняем его информацией из найденного соответсвующего объекта с данными
+  document.querySelector('.big-picture__img img').setAttribute('src', pictureData.url);
+  document.querySelector('.likes-count').textContent = pictureData.likes;
+  document.querySelector('.comments-count').textContent = pictureData.comments.length;
+  document.querySelector('.social__caption').textContent = pictureData.description;
+  // Задаем шаблон комментария
+  var commentElementTemplate = document.querySelector('.social__comment');
+  // Переопределяем и наполняем фрагмент данными из массива
+  fragment = document.createDocumentFragment();
+  for (i = 0; i < pictureData.comments.length; i++) {
+    var commentElement = commentElementTemplate.cloneNode(true);
+    commentElement.querySelector('.social__picture').setAttribute('src', pictureData.comments[i].avatar);
+    commentElement.querySelector('.social__picture').setAttribute('alt', pictureData.comments[i].name);
+    commentElement.querySelector('.social__text').textContent = pictureData.comments[i].message;
+    fragment.appendChild(commentElement);
+  }
+  // Ищем дефолтные комментарии и удаляем их из DOM
+  var commentsCollection = document.querySelectorAll('.social__comments');
+  var allDefaultComments = document.querySelectorAll('.social__comment');
+  for (i = 0; i < allDefaultComments.length; i++) {
+    commentsCollection[0].removeChild(allDefaultComments[i]);
+  }
+  // Добавляем сгенерированные комментарии в DOM
+  document.querySelector('.social__comments').appendChild(fragment);
+  // Прячем блоки счётчика комментариев и загрузки новых комментариев
+  document.querySelector('.social__comment-count').classList.add('hidden');
+  document.querySelector('.comments-loader').classList.add('hidden');
+  // Добавляем body класс modal-open, чтобы контейнер с фотографиями позади не прокручивался при скролле
+  body.classList.add('modal-open');
+  bigPicture.classList.remove('hidden');
+  pictureCancel.addEventListener('click', onPictureCancelClick);
+};
+var pictures = document.querySelectorAll('.picture__img');
+var links = document.querySelectorAll('a.picture');
+var pictureCancel = document.querySelector('#picture-cancel');
+for (i = 0; i < pictures.length; i++) {
+  var picture = pictures[i];
+  var link = links[i];
+  picture.addEventListener('click', onThumbnailClick);
+  link.addEventListener('keydown', onThumbnailPressEnter);
+}
+
 
