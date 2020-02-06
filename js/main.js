@@ -93,7 +93,6 @@ for (var i = 0; i < randomPhotos.length; i++) {
 photoElementList.appendChild(fragment);
 
 // 4 Показываем .big-picture, и заполняем его информацией из массива с данными
-document.querySelector('.big-picture').classList.remove('hidden');
 document.querySelector('.big-picture__img img').setAttribute('src', randomPhotos[0].url);
 document.querySelector('.likes-count').textContent = randomPhotos[0].likes;
 document.querySelector('.comments-count').textContent = randomPhotos[0].comments.length;
@@ -125,3 +124,233 @@ document.querySelector('.comments-loader').classList.add('hidden');
 
 // 6 Добавляем body класс modal-open, чтобы контейнер с фотографиями позади не прокручивался при скролле
 document.querySelector('body').classList.add('modal-open');
+
+// Загрузка изображения и показ формы редактирования
+var upload = document.querySelector('#upload-file');
+var cancel = document.querySelector('#upload-cancel');
+var form = document.querySelector('#upload-select-image');
+var editForm = document.querySelector('.img-upload__overlay');
+
+var openPopup = function () {
+  editForm.classList.remove('hidden');
+  inputHashTag.addEventListener('input', onTest);
+
+};
+var closePopup = function () {
+  editForm.classList.add('hidden');
+  inputHashTag.removeEventListener('input', onTest);
+  form.reset();
+  inputHashTag.setCustomValidity('');
+
+
+};
+var onEscapePress = function (evt) {
+  if (evt.key === 'Escape') {
+    if (document.activeElement !== inputHashTag) {
+      closePopup();
+
+    } else {
+      inputHashTag.blur();
+    }
+  }
+};
+upload.addEventListener('change', function () {
+  openPopup();
+  document.addEventListener('keydown', onEscapePress);
+});
+cancel.addEventListener('click', function () {
+  closePopup();
+  document.removeEventListener('keydown', onEscapePress);
+});
+// Применение эффекта для изображения и редактирование размера изображения
+var MAX_SCALE = 100;
+var MIN_SCALE = 25;
+var buttonControlSmaller = document.querySelector('.scale__control--smaller');
+var buttonControlBigger = document.querySelector('.scale__control--bigger');
+var uploadImage = document.querySelector('.img-upload__preview img');
+// глобальные переменные для генерации и применения кооректного атрибута style
+var currentScale = document.querySelector('.scale__control--value');
+var currentFilter = 'none';
+var currentSaturationFilter = 'none';
+// Увеличение масштаба изображения
+var onPreviewIncrease = function () {
+  var scale = parseInt(currentScale.getAttribute('value'), 10);
+  if (scale < MAX_SCALE) {
+    var newScale = scale + 25 + '%';
+    currentScale.setAttribute('value', newScale);
+    uploadImage.setAttribute('style', getPreviewStyle());
+  }
+};
+// Уменьшение масштаба изображения
+var onPreviewDecrease = function () {
+  var scale = parseInt(currentScale.getAttribute('value'), 10);
+  if (scale > MIN_SCALE) {
+    var newScale = scale - 25 + '%';
+    currentScale.setAttribute('value', newScale);
+    uploadImage.setAttribute('style', getPreviewStyle());
+  }
+};
+buttonControlSmaller.addEventListener('click', onPreviewDecrease);
+buttonControlBigger.addEventListener('click', onPreviewIncrease);
+// Функция для получения атрибута style в зав-ти от выбранных фильтров и насыщенности
+var getPreviewStyle = function () {
+  var fractionalValue = parseInt(currentScale.getAttribute('value'), 10) / 100;
+  return 'transform: scale(' + fractionalValue + ');' + 'filter: ' + currentFilter +
+  '(' + currentSaturationFilter + ');';
+};
+var radioEffectButtons = document.querySelectorAll('.effects__radio');
+// Обработчик переключения эффектов
+var onRadioClick = function (evt) {
+  currentScale.setAttribute('value', '100%');
+  var effect = evt.target.value;
+  uploadImage.classList.remove(uploadImage.classList[0]);
+  uploadImage.classList.add('effects__preview--' + effect);
+  onEffectSaturateChange();
+  if (effect === 'none') {
+    sliderEffect.classList.add('hidden');
+  } else {
+    sliderEffect.classList.remove('hidden');
+  }
+};
+for (i = 0; i < radioEffectButtons.length; i++) {
+  radioEffectButtons[i].addEventListener('click', onRadioClick);
+}
+var sliderEffect = document.querySelector('.img-upload__effect-level');
+var effectLevelPin = sliderEffect.querySelector('.effect-level__pin');
+var effectLevel = sliderEffect.querySelector('.effect-level__value');
+// Рассчет и применения текущей насыщенности фильтра в зависимости от значения value у  effectLevel
+var onEffectSaturateChange = function () {
+  var currentEffectLevelValue = effectLevel.getAttribute('value');
+  if (uploadImage.classList.contains('effects__preview--chrome')) {
+    currentFilter = 'grayscale';
+    currentSaturationFilter = currentEffectLevelValue / 100;
+    uploadImage.setAttribute('style', getPreviewStyle());
+  }
+  if (uploadImage.classList.contains('effects__preview--sepia')) {
+    currentFilter = 'sepia';
+    currentSaturationFilter = currentEffectLevelValue / 100;
+    uploadImage.setAttribute('style', getPreviewStyle());
+  }
+  if (uploadImage.classList.contains('effects__preview--marvin')) {
+    currentFilter = 'invert';
+    currentSaturationFilter = currentEffectLevelValue + '%';
+    uploadImage.setAttribute('style', getPreviewStyle());
+  }
+  if (uploadImage.classList.contains('effects__preview--phobos')) {
+    currentFilter = 'blur';
+    currentSaturationFilter = currentEffectLevelValue * 0.03 + 'px';
+    uploadImage.setAttribute('style', getPreviewStyle());
+  }
+  if (uploadImage.classList.contains('effects__preview--heat')) {
+    currentFilter = 'brightness';
+    currentSaturationFilter = 1 + currentEffectLevelValue * 0.02;
+    uploadImage.setAttribute('style', getPreviewStyle());
+  }
+  if (uploadImage.classList.contains('effects__preview--none')) {
+    uploadImage.setAttribute('style', 'filter: none');
+  }
+};
+effectLevelPin.addEventListener('mouseup', onEffectSaturateChange);
+// Валидация хештегов
+var MIN_LENGTH_TAG = 2;
+var MAX_LENGTH_TAG = 20;
+var MAX_TAG_COUNT = 5;
+var inputHashTag = document.querySelector('.text__hashtags');
+// Преобразование строки в массив, где разделителем является 1 или более раздельных символов подряд
+var splitString = function () {
+  var tagString = inputHashTag.value;
+  return tagString.split(/\s+/);
+};
+// Хештег должен начинаться с решетки
+var checkValidFirstCharacter = function (hashTag) {
+  var error = false;
+  var symbolsArray = hashTag.split('');
+  if (symbolsArray[0] !== '#') {
+    error = true;
+  }
+  return error;
+};
+var checkValidCharacters = function (hashTag) {
+  var regex = /^[#]{1}[0-9A-Za-zа-яА-ЯёЁ]*$/;
+  var error = false;
+  var matches = hashTag.match(regex);
+  if (matches === null && hashTag !== '') {
+    error = true;
+  }
+  return error;
+};
+var checkMinLength = function (hashTag) {
+  var error = false;
+  if (hashTag.length < MIN_LENGTH_TAG && hashTag !== '') {
+    error = true;
+  }
+  return error;
+};
+var checkMaxLength = function (hashTag) {
+  var error = false;
+  if (hashTag.length > MAX_LENGTH_TAG) {
+    error = true;
+  }
+  return error;
+};
+var checkCopies = function (array, index) {
+  var error = false;
+  for (var j = index + 1; j < array.length; j++) {
+    if (array[index].toLowerCase() === array[j].toLowerCase() && array[index] !== '') {
+      error = true;
+    }
+  }
+  return error;
+};
+var checkCountTags = function (hashtag, index) {
+  var error = false;
+  if (index > MAX_TAG_COUNT - 1 && hashtag !== '') {
+    error = true;
+  }
+  return error;
+};
+var checkInput = function () {
+  var tags = splitString();
+  var stringError = '';
+  for (i = 0; i < tags.length; i++) {
+    // хештеги необязательны
+    if (tags.length === 1 && tags[0] === '') {
+      break;
+    }
+    if (checkValidFirstCharacter(tags[0])) {
+      stringError = 'хэш-тег начинается с символа # (решётка). хэш-теги разделяются пробелами';
+      break;
+    }
+    if (checkValidCharacters(tags[i])) {
+      stringError = 'строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т.п.), символы пунктуации (тире, дефис, запятая и т.п.), эмодзи и т.д.';
+      break;
+    }
+    if (checkMinLength(tags[i])) {
+      stringError = 'хеш-тег не может состоять только из одной решётки';
+      break;
+    }
+    if (checkMaxLength(tags[i])) {
+      stringError = 'максимальная длина одного хэш-тега 20 символов, включая решётку';
+      break;
+    }
+    if (checkCopies(tags, i)) {
+      stringError = 'один и тот же хэш-тег не может быть использован дважды';
+      break;
+    }
+    if (checkCountTags(tags[i], i)) {
+      stringError = 'нельзя указать больше пяти хэш-тегов';
+      break;
+    }
+  }
+  return stringError;
+};
+var onTest = function (evt) {
+  var target = evt.target;
+  var customStringError = checkInput();
+  if (customStringError) {
+    target.setCustomValidity(customStringError);
+  } else {
+    target.setCustomValidity('');
+  }
+};
+
