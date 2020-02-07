@@ -323,7 +323,6 @@ var onTest = function (evt) {
 };
 
 // Полноэкранный режим
-var ENTER_KEY = 'Enter';
 var body = document.querySelector('body');
 var bigPicture = document.querySelector('.big-picture');
 // bigPicture.classList.remove('hidden');
@@ -339,23 +338,7 @@ var switchOnTabNavigation = function (collection) {
     collection[i].setAttribute('tabindex', '0');
   }
 };
-var onThumbnailClick = function (evt) {
-  showBigPicture(evt.target);
-};
-var onThumbnailPressEnter = function (evt) {
-  if (evt.key === ENTER_KEY) {
-  // т.к. табуляция идет по ссылкам, в которые обернуты изображения, найдем нужное изображение с помощью свойства children под индексом 0
-    showBigPicture(evt.target.children[0]);
-  }
-};
-var onPictureCancelClick = function () {
-  bigPicture.classList.add('hidden');
-  body.classList.remove('modal-open');
-  switchOnTabNavigation(links);
-};
-var showBigPicture = function (element) {
-  switchOffTabNavigation(links);
-  var src = element.getAttribute('src');
+var searchPictureData = function (src) {
   for (var j = 0; j < randomPhotos.length; j++) {
     // по атрибуту src элемента, по которому произошел клик найдем объект с данными
     if (randomPhotos[j].url === src) {
@@ -363,6 +346,31 @@ var showBigPicture = function (element) {
       break;
     }
   }
+  return pictureData;
+};
+var onThumbnailClick = function (evt) {
+  var element = evt.currentTarget.children[0];
+  openBigPicture(element);
+};
+var onPictureCancelClick = function () {
+  closeBigPicture();
+  body.classList.remove('modal-open');
+};
+var onPictureEscapePress = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closeBigPicture();
+  }
+};
+var closeBigPicture = function () {
+  bigPicture.classList.add('hidden');
+  switchOnTabNavigation(links);
+  pictureCancel.removeEventListener('click', onPictureCancelClick);
+  document.removeEventListener('keydown', onPictureEscapePress);
+};
+var openBigPicture = function (element) {
+  switchOffTabNavigation(links);
+  var src = element.getAttribute('src');
+  var pictureData = searchPictureData(src);
   // Показываем .big-picture, и заполняем его информацией из найденного соответсвующего объекта с данными
   document.querySelector('.big-picture__img img').setAttribute('src', pictureData.url);
   document.querySelector('.likes-count').textContent = pictureData.likes;
@@ -394,15 +402,12 @@ var showBigPicture = function (element) {
   body.classList.add('modal-open');
   bigPicture.classList.remove('hidden');
   pictureCancel.addEventListener('click', onPictureCancelClick);
+  document.addEventListener('keydown', onPictureEscapePress);
 };
-var pictures = document.querySelectorAll('.picture__img');
+
 var links = document.querySelectorAll('a.picture');
 var pictureCancel = document.querySelector('#picture-cancel');
-for (i = 0; i < pictures.length; i++) {
-  var picture = pictures[i];
+for (i = 0; i < links.length; i++) {
   var link = links[i];
-  picture.addEventListener('click', onThumbnailClick);
-  link.addEventListener('keydown', onThumbnailPressEnter);
+  link.addEventListener('click', onThumbnailClick);
 }
-
-
