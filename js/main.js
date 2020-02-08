@@ -325,7 +325,7 @@ var onTest = function (evt) {
 // Полноэкранный режим
 var body = document.querySelector('body');
 var bigPicture = document.querySelector('.big-picture');
-// bigPicture.classList.remove('hidden');
+var pictureCancel = document.querySelector('#picture-cancel');
 var switchOffTabNavigation = function (collection) {
   // убираю возможность навигации по табу у ссылок на фоне, чтобы нажатие таба давало фокус сразу на нужный элемент.
   for (i = 0; i < collection.length; i++) {
@@ -354,7 +354,6 @@ var onThumbnailClick = function (evt) {
 };
 var onPictureCancelClick = function () {
   closeBigPicture();
-  body.classList.remove('modal-open');
 };
 var onPictureEscapePress = function (evt) {
   if (evt.key === ESC_KEY) {
@@ -366,6 +365,7 @@ var closeBigPicture = function () {
   switchOnTabNavigation(links);
   pictureCancel.removeEventListener('click', onPictureCancelClick);
   document.removeEventListener('keydown', onPictureEscapePress);
+  body.classList.remove('modal-open');
 };
 var openBigPicture = function (element) {
   switchOffTabNavigation(links);
@@ -406,7 +406,6 @@ var openBigPicture = function (element) {
 };
 
 var links = document.querySelectorAll('a.picture');
-var pictureCancel = document.querySelector('#picture-cancel');
 for (i = 0; i < links.length; i++) {
   var link = links[i];
   link.addEventListener('click', onThumbnailClick);
