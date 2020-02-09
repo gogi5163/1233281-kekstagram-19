@@ -17,7 +17,6 @@
     form.reset();
     inputHashTag.setCustomValidity('');
     window.preview.makeDefaultPreviewImage();
-    
   };
   var closePopupOrBlurElement = function () {
     if (document.activeElement !== inputHashTag && document.activeElement !== textareaComment) {
