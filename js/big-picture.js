@@ -17,7 +17,7 @@
     }
   };
   var searchPictureData = function (src) {
-    for (i = 0; i < window.data.pictures.length; i++) {
+    for (var i = 0; i < window.data.pictures.length; i++) {
     // по атрибуту src элемента, по которому произошел клик найдем объект с данными
       if (window.data.pictures[i].url === src) {
         var pictureData = window.data.pictures[i];
@@ -66,8 +66,8 @@
     // Ищем дефолтные комментарии и удаляем их из DOM
     var commentsCollection = document.querySelectorAll('.social__comments');
     var allDefaultComments = document.querySelectorAll('.social__comment');
-    for (i = 0; i < allDefaultComments.length; i++) {
-      commentsCollection[0].removeChild(allDefaultComments[i]);
+    for (var j = 0; j < allDefaultComments.length; j++) {
+      commentsCollection[0].removeChild(allDefaultComments[j]);
     }
     // Добавляем сгенерированные комментарии в DOM
     document.querySelector('.social__comments').appendChild(fragment);
