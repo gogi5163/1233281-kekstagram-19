@@ -39,7 +39,7 @@
   '(' + currentSaturationFilter + ');';
   };
   var radioEffectButtons = document.querySelectorAll('.effects__radio');
-  // флаг для регулирования добавления обработчика 
+  // флаг для регулирования добавления обработчика
   var pinFlag = true;
   // Обработчик переключения эффектов
   var onRadioClick = function (evt) {
@@ -119,7 +119,6 @@
       };
 
       var newPinPlace = effectLevelPin.offsetLeft - shift.x;
-      
       var left = 'left: ' + Math.floor(newPinPlace) + 'px; ';
       var width = 'width: ' + Math.floor(newPinPlace) + 'px; ';
       // Значение value вычисляется из пропорции
