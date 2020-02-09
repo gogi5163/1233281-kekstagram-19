@@ -17,10 +17,10 @@
     }
   };
   var searchPictureData = function (src) {
-    for (var j = 0; j < window.data.pictures.length; j++) {
+    for (i = 0; i < window.data.pictures.length; i++) {
     // по атрибуту src элемента, по которому произошел клик найдем объект с данными
-      if (window.data.pictures[j].url === src) {
-        var pictureData = window.data.pictures[j];
+      if (window.data.pictures[i].url === src) {
+        var pictureData = window.data.pictures[i];
         break;
       }
     }
@@ -56,7 +56,7 @@
     var commentElementTemplate = document.querySelector('.social__comment');
     // Переопределяем и наполняем фрагмент данными из массива
     var fragment = document.createDocumentFragment();
-    for (i = 0; i < pictureData.comments.length; i++) {
+    for (var i = 0; i < pictureData.comments.length; i++) {
       var commentElement = commentElementTemplate.cloneNode(true);
       commentElement.querySelector('.social__picture').setAttribute('src', pictureData.comments[i].avatar);
       commentElement.querySelector('.social__picture').setAttribute('alt', pictureData.comments[i].name);

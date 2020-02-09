@@ -62,32 +62,27 @@
     if (uploadImage.classList.contains('effects__preview--chrome')) {
       currentFilter = 'grayscale';
       currentSaturationFilter = currentEffectLevelValue / 100;
-      uploadImage.setAttribute('style', getPreviewStyle());
     }
     if (uploadImage.classList.contains('effects__preview--sepia')) {
       currentFilter = 'sepia';
       currentSaturationFilter = currentEffectLevelValue / 100;
-      uploadImage.setAttribute('style', getPreviewStyle());
     }
     if (uploadImage.classList.contains('effects__preview--marvin')) {
       currentFilter = 'invert';
       currentSaturationFilter = currentEffectLevelValue + '%';
-      uploadImage.setAttribute('style', getPreviewStyle());
     }
     if (uploadImage.classList.contains('effects__preview--phobos')) {
       currentFilter = 'blur';
       currentSaturationFilter = currentEffectLevelValue * 0.03 + 'px';
-      uploadImage.setAttribute('style', getPreviewStyle());
     }
     if (uploadImage.classList.contains('effects__preview--heat')) {
       currentFilter = 'brightness';
       currentSaturationFilter = 1 + currentEffectLevelValue * 0.02;
-      uploadImage.setAttribute('style', getPreviewStyle());
     }
     if (uploadImage.classList.contains('effects__preview--none')) {
       currentFilter = 'none';
-      uploadImage.setAttribute('style', getPreviewStyle());
     }
+    uploadImage.setAttribute('style', getPreviewStyle());
   };
   effectLevelPin.addEventListener('mouseup', onEffectSaturateChange);
 

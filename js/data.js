@@ -27,7 +27,7 @@
   };
   // Функция для создания массива из сгенерированных JS объектов, которые описывают фотографии
   var createRandomPhotoObjects = function (count) {
-    var array = [];
+    var photoObjects = [];
     var photoSources = window.util.shuffleArray(window.util.createSequentialArray(count));
     for (var i = 0; i < count; i++) {
       var photoObject = {};
@@ -44,9 +44,9 @@
         photoObject.comments[j].name = COMMENTATOR_NAMES[window.util.getRandomNumber(0, COMMENTATOR_NAMES.length - 1)];
 
       }
-      array[i] = photoObject;
+      photoObjects[i] = photoObject;
     }
-    return array;
+    return photoObjects;
   };
   window.data = {
     pictures: createRandomPhotoObjects(IMAGE_COUNT)
