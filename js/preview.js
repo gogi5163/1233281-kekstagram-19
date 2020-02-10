@@ -40,15 +40,14 @@
   };
   var radioEffectButtons = document.querySelectorAll('.effects__radio');
   // флаг для регулирования добавления обработчика
-  var pinFlag = true;
+  var maxWidthLine;
   // Обработчик переключения эффектов
   var onRadioClick = function (evt) {
     currentScale.setAttribute('value', '100%');
     var effect = evt.target.value;
     uploadImage.classList.remove(uploadImage.classList[0]);
     uploadImage.classList.add('effects__preview--' + effect);
-    effectLevel.setAttribute('value', 100);
-    onEffectSaturateChange();
+    changeEffectSaturate();
     if (effect === 'none') {
       sliderEffect.classList.add('hidden');
     } else {
@@ -57,14 +56,7 @@
       effectLevelPin.setAttribute('style', 'left: 100%;');
       effectLevelDepth.setAttribute('style', 'width: 100%;');
       effectLevel.setAttribute('value', 100);
-      var maxWidthLine = effectLevelPin.offsetLeft;
-      var onPinMouseDown = function (pinEvt) {
-        pinFlag = false;
-        movePin(pinEvt, maxWidthLine);
-      };
-      if (pinFlag) {
-        effectLevelPin.addEventListener('mousedown', onPinMouseDown);
-      }
+      maxWidthLine = effectLevelPin.offsetLeft;
 
     }
   };
@@ -77,7 +69,7 @@
   var effectLevelDepth = document.querySelector('.effect-level__depth');
 
   // Рассчет и применения текущей насыщенности фильтра в зависимости от значения value у  effectLevel
-  var onEffectSaturateChange = function () {
+  var changeEffectSaturate = function () {
     var currentEffectLevelValue = effectLevel.getAttribute('value');
     if (uploadImage.classList.contains('effects__preview--chrome')) {
       currentFilter = 'grayscale';
@@ -140,7 +132,7 @@
       effectLevelDepth.setAttribute('style', width);
       effectLevel.setAttribute('value', value);
       // Мгновенное применение насыщенности
-      onEffectSaturateChange();
+      changeEffectSaturate();
     };
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
@@ -151,6 +143,12 @@
     document.addEventListener('mouseup', onMouseUp);
 
   };
+  var onPinMouseDown = function (pinEvt) {
+    movePin(pinEvt, maxWidthLine);
+  };
+
+  effectLevelPin.addEventListener('mousedown', onPinMouseDown);
+
   window.preview = {
     makeDefaultPreviewImage: function () {
       uploadImage.setAttribute('style', '');
