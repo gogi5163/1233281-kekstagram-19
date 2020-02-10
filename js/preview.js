@@ -39,7 +39,7 @@
   '(' + currentSaturationFilter + ');';
   };
   var radioEffectButtons = document.querySelectorAll('.effects__radio');
-  // флаг для регулирования добавления обработчика
+  // Максимальная ширина эффекта, которую получим при клике на миниатюру переключения эффектов т.к. по-умолчанию объекта на странице нет
   var maxWidthLine;
   // Обработчик переключения эффектов
   var onRadioClick = function (evt) {
