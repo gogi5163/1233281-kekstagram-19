@@ -10,13 +10,13 @@
   var openPopup = function () {
     editForm.classList.remove('hidden');
     inputHashTag.addEventListener('input', window.validation.onInputValueVerify);
-
   };
   var closePopup = function () {
     editForm.classList.add('hidden');
     inputHashTag.removeEventListener('input', window.validation.onInputValueVerify);
     form.reset();
     inputHashTag.setCustomValidity('');
+    window.preview.makeDefaultPreviewImage();
   };
   var closePopupOrBlurElement = function () {
     if (document.activeElement !== inputHashTag && document.activeElement !== textareaComment) {
