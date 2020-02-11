@@ -1,21 +1,17 @@
 'use strict';
 (function () {
+  var MAX_REQUEST_TIME = 10000;
+  var CODE_200 = 200;
+  var CODE_400 = 400;
+  var CODE_401 = 401;
+  var CODE_404 = 404;
 
   window.backend = {
     load: function (url, onLoad, onError) {
-      var MAX_REQUEST_TIME = 10000;
-      var CODE_200 = 200;
-      var CODE_400 = 400;
-      var CODE_401 = 401;
-      var CODE_404 = 404;
       var xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
       xhr.addEventListener('error', function () {
-        try {
-          throw new Error('Произошла ошибка соединения');
-        } catch (errorMessage) {
-          onError(errorMessage);
-        }
+        onError('Произошла ошибка соединения');
       });
       xhr.timeout = MAX_REQUEST_TIME;
 
