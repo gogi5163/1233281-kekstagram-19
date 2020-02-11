@@ -26,12 +26,12 @@
 
   };
 
-  var onError = function (errorString) {
+  var onError = function (errorMessage) {
     // Находим шаблон ошибки и клонируем его
     var errorTemplate = document.querySelector('#error').content;
     var errorElement = errorTemplate.cloneNode(true);
     // Вносим в клонированный шаблон текст ошибки
-    errorElement.querySelector('h2').textContent = errorString;
+    errorElement.querySelector('h2').textContent = errorMessage;
     errorElement.querySelector('h2').setAttribute('style', 'line-height: 32px;');
     var errorButton = errorElement.querySelector('button');
     errorButton.textContent = 'Закрыть окно';
