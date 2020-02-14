@@ -40,7 +40,7 @@
     main.appendChild(errorElement);
     // Добавим обработчик на закрытие окна ошибки
     errorButton.addEventListener('click', function () {
-      main.removeChild(main.querySelector('.error'));
+      main.querySelector('.error').remove();
     });
 
   };
