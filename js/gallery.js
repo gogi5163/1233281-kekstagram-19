@@ -14,15 +14,21 @@
       photoElement.querySelector('.picture__comments').textContent = photo.comments.length;
       return photoElement;
     };
-    // Создаем и наполняем фрагмент сгенерированными элементами фотографий
-    var fragment = document.createDocumentFragment();
-    for (var i = 0; i < data.length; i++) {
-      fragment.appendChild(renderPhotoElement(data[i]));
-    }
-    // Вставка элементов в DOM
-    photoElementList.appendChild(fragment);
-    // Включение полноэкранного режима
-    window.bigPicture.enable(data);
+    window.gallery = {
+      data: data,
+      addElements: function (elementsArray) {
+        var fragment = document.createDocumentFragment();
+        for (var i = 0; i < elementsArray.length; i++) {
+          fragment.appendChild(renderPhotoElement(elementsArray[i]));
+        }
+        // Вставка элементов в DOM
+        photoElementList.appendChild(fragment);
+        // Включение полноэкранного режима
+        window.bigPicture.enable(elementsArray);
+      }
+
+    };
+    window.gallery.addElements(data);
 
   };
 
