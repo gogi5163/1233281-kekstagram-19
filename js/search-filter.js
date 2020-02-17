@@ -3,8 +3,7 @@
   var RANDOM_PHOTO_COUNT = 10;
   var photoElementList = document.querySelector('.pictures');
   var filterSection = document.querySelector('.img-filters');
-  filterSection.classList.remove('img-filters--inactive');
-  var filterButtons = filterSection.querySelectorAll('button');
+  var filterButtons = filterSection.querySelectorAll('.img-filters button');
   var activeButton;
   var onFilterClick = function (evt) {
     var target = evt.target;

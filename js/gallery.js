@@ -29,6 +29,9 @@
 
     };
     window.gallery.addElements(data);
+    // Покажем фильтры, только когда получим data
+    var filterSection = document.querySelector('.img-filters');
+    filterSection.classList.remove('img-filters--inactive');
 
   };
 
