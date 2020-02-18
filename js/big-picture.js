@@ -31,6 +31,7 @@
       var onThumbnailClick = function (evt) {
         var element = evt.currentTarget.children[0];
         openBigPicture(element);
+        window.downloadMore.showComments();
       };
       var onPictureCancelClick = function () {
         closeBigPicture();
@@ -44,6 +45,7 @@
         pictureCancel.removeEventListener('click', onPictureCancelClick);
         document.removeEventListener('keydown', onPictureEscapePress);
         body.classList.remove('modal-open');
+
       };
       var openBigPicture = function (element) {
         switchOffTabNavigation(links);
@@ -81,6 +83,7 @@
         bigPicture.classList.remove('hidden');
         pictureCancel.addEventListener('click', onPictureCancelClick);
         document.addEventListener('keydown', onPictureEscapePress);
+        window.downloadMore.hideComments();
       };
 
       var links = document.querySelectorAll('a.picture');
@@ -88,6 +91,7 @@
         var link = links[i];
         link.addEventListener('click', onThumbnailClick);
       }
+
     }
   };
 })();
