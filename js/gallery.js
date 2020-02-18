@@ -16,15 +16,15 @@
     };
     window.gallery = {
       data: data,
-      addElements: function (elementsArray) {
+      addElements: function (elements) {
         var fragment = document.createDocumentFragment();
-        for (var i = 0; i < elementsArray.length; i++) {
-          fragment.appendChild(renderPhotoElement(elementsArray[i]));
+        for (var i = 0; i < elements.length; i++) {
+          fragment.appendChild(renderPhotoElement(elements[i]));
         }
         // Вставка элементов в DOM
         photoElementList.appendChild(fragment);
         // Включение полноэкранного режима
-        window.bigPicture.enable(elementsArray);
+        window.bigPicture.enable(elements);
       }
 
     };
