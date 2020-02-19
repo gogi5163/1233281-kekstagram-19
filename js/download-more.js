@@ -2,41 +2,42 @@
 (function () {
   var COMMENT_COUNT_STEP = 5;
   var commentLoader = document.querySelector('.comments-loader');
+  var countCurrentComments;
+  var countTotalComments;
   var onCommentLoaderClick = function () {
     var comments = document.querySelectorAll('.social__comment');
-    var condition;
-    if ((window.downloadMore.currentCommentCount + COMMENT_COUNT_STEP) < window.downloadMore.totalCommentCount) {
-      condition = window.downloadMore.currentCommentCount + COMMENT_COUNT_STEP;
+    var countDisplayComments;
+    if ((countCurrentComments + COMMENT_COUNT_STEP) < countTotalComments) {
+      countDisplayComments = countCurrentComments + COMMENT_COUNT_STEP;
     } else {
-      condition = window.downloadMore.totalCommentCount;
+      countDisplayComments = countTotalComments;
       commentLoader.classList.add('hidden');
       commentLoader.removeEventListener('click', onCommentLoaderClick);
     }
-    for (var i = window.downloadMore.currentCommentCount; i < condition; i++) {
+    for (var i = countCurrentComments; i < countDisplayComments; i++) {
       comments[i].removeAttribute('style');
 
     }
-
-    window.downloadMore.currentCommentCount += COMMENT_COUNT_STEP;
+    countCurrentComments = countDisplayComments;
+    document.querySelector('.social__comment-count').textContent = countCurrentComments + ' из ' + countTotalComments + ' комментариев';
   };
   window.downloadMore = {
     hideComments: function () {
       var comments = document.querySelectorAll('.social__comment');
+      countTotalComments = comments.length;
       if (comments.length > COMMENT_COUNT_STEP) {
-        window.downloadMore.currentCommentCount = COMMENT_COUNT_STEP;
+        countCurrentComments = COMMENT_COUNT_STEP;
         commentLoader.classList.remove('hidden');
         for (var i = COMMENT_COUNT_STEP; i < comments.length; i++) {
           comments[i].setAttribute('style', 'display:none;');
         }
       } else {
-        window.downloadMore.currentCommentCount = comments.length;
+        countCurrentComments = comments.length;
       }
       commentLoader.removeEventListener('click', onCommentLoaderClick);
+      document.querySelector('.social__comment-count').textContent = countCurrentComments + ' из ' + countTotalComments + ' комментариев';
     },
     showComments: function () {
-      var comments = document.querySelectorAll('.social__comment');
-      // Сохраним количество комментариев у выбранной фотографии
-      window.downloadMore.totalCommentCount = comments.length;
       commentLoader.addEventListener('click', onCommentLoaderClick);
 
     }

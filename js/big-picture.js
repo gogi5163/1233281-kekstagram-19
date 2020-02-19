@@ -54,7 +54,6 @@
         // Показываем .big-picture, и заполняем его информацией из найденного соответсвующего объекта с данными
         document.querySelector('.big-picture__img img').setAttribute('src', pictureData.url);
         document.querySelector('.likes-count').textContent = pictureData.likes;
-        document.querySelector('.comments-count').textContent = pictureData.comments.length;
         document.querySelector('.social__caption').textContent = pictureData.description;
         // Задаем шаблон комментария
         var commentElementTemplate = document.querySelector('.social__comment');
@@ -76,7 +75,6 @@
         // Добавляем сгенерированные комментарии в DOM
         document.querySelector('.social__comments').appendChild(fragment);
         // Прячем блоки счётчика комментариев и загрузки новых комментариев
-        document.querySelector('.social__comment-count').classList.add('hidden');
         document.querySelector('.comments-loader').classList.add('hidden');
         // Добавляем body класс modal-open, чтобы контейнер с фотографиями позади не прокручивался при скролле
         body.classList.add('modal-open');
