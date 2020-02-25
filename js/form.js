@@ -40,7 +40,7 @@
     window.util.isEscEvent(evt, closePopupOrBlurElement);
   };
   upload.addEventListener('change', function () {
-    openPopup();
+    window.previewUpload.chooseAndRead(openPopup);
     document.addEventListener('keydown', onEscapePress);
   });
   cancel.addEventListener('click', function () {
